@@ -1,0 +1,6 @@
+Id,Tables,Join Conditions,Predicates,Cardinality
+1,cast_info ci,,"ci.person_id,>,1471429,ci.role_id,=,10",3739273
+2,movie_keyword mk,,"mk.keyword_id,>,1532",3306102
+3,movie_keyword mk,,"mk.keyword_id,<,2039",1449602
+4,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,2233497",5
+5,"title t,movie_info mi,movie_info_idx mi_idx","t.id=mi.movie_id,t.id=mi_idx.movie_id","t.production_year,=,1996,mi.info_type_id,<,2",16097

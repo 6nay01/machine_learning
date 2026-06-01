@@ -1,0 +1,21 @@
+Id,Tables,Join Conditions,Predicates,Cardinality,Prediction,QError,CardinalityBucket,TableCombo,PredicateSignature
+75,"title t,movie_companies mc,cast_info ci","t.id=mc.movie_id,t.id=ci.movie_id","mc.company_id,=,11244,mc.company_type_id,<,2,ci.person_id,<,2276272,ci.role_id,=,10",3,679,226.33333333333334,<=10,t|mc|ci,mc.company_id:=|mc.company_type_id:<|ci.person_id:<|ci.role_id:=
+1492,cast_info ci,,"ci.person_id,=,2002826,ci.role_id,=,2",1,128,128.0,<=10,ci,ci.person_id:=|ci.role_id:=
+1710,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","t.kind_id,=,7,t.production_year,=,1937,ci.role_id,>,1",8,951,118.875,<=10,t|ci|mk,t.kind_id:=|t.production_year:=|ci.role_id:>
+1705,cast_info ci,,"ci.person_id,=,2346963",792,20,39.6,101-1k,ci,ci.person_id:=
+122,"title t,movie_companies mc",t.id=mc.movie_id,"t.kind_id,>,2,t.production_year,=,2012,mc.company_id,=,846,mc.company_type_id,<,2",2,73,36.5,<=10,t|mc,t.kind_id:>|t.production_year:=|mc.company_id:=|mc.company_type_id:<
+1094,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,2158680",1313,37,35.486486486486484,1k-10k,t|ci,ci.person_id:=
+343,"title t,cast_info ci,movie_info mi","t.id=ci.movie_id,t.id=mi.movie_id","ci.person_id,=,1520514",8,282,35.25,<=10,t|ci|mi,ci.person_id:=
+1743,movie_companies mc,,"mc.company_id,=,8969,mc.company_type_id,=,1",463,14,33.07142857142857,101-1k,mc,mc.company_id:=|mc.company_type_id:=
+533,"title t,movie_companies mc,movie_info mi","t.id=mc.movie_id,t.id=mi.movie_id","t.kind_id,<,7,t.production_year,>,1897,mc.company_id,=,21466,mc.company_type_id,<,2",2317,82,28.25609756097561,1k-10k,t|mc|mi,t.kind_id:<|t.production_year:>|mc.company_id:=|mc.company_type_id:<
+1830,cast_info ci,,"ci.person_id,=,1947240,ci.role_id,<,4",358,13,27.53846153846154,101-1k,ci,ci.person_id:=|ci.role_id:<
+527,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,923573,ci.role_id,>,3",1,25,25.0,<=10,t|ci,ci.person_id:=|ci.role_id:>
+1712,"title t,movie_companies mc,movie_info mi","t.id=mc.movie_id,t.id=mi.movie_id","t.kind_id,<,3,t.production_year,<,2001,mc.company_id,=,159,mc.company_type_id,>,1",99219,4185,23.708243727598568,10k-100k,t|mc|mi,t.kind_id:<|t.production_year:<|mc.company_id:=|mc.company_type_id:>
+1037,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","t.kind_id,>,4,mc.company_id,<,11204,mk.keyword_id,=,16264",3,68,22.666666666666668,<=10,t|mc|mk,t.kind_id:>|mc.company_id:<|mk.keyword_id:=
+811,"title t,movie_companies mc,movie_info_idx mi_idx","t.id=mc.movie_id,t.id=mi_idx.movie_id","t.production_year,>,2000,mc.company_id,=,530",2410,107,22.523364485981308,1k-10k,t|mc|mi_idx,t.production_year:>|mc.company_id:=
+1147,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","ci.role_id,<,4,mk.keyword_id,=,4106",364,8115,22.293956043956044,101-1k,t|ci|mk,ci.role_id:<|mk.keyword_id:=
+482,cast_info ci,,"ci.person_id,=,2861355",619,28,22.107142857142858,101-1k,ci,ci.person_id:=
+770,cast_info ci,,"ci.person_id,=,2253132,ci.role_id,>,7",1,22,22.0,<=10,ci,ci.person_id:=|ci.role_id:>
+1206,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,13977,mc.company_type_id,=,2",2,44,22.0,<=10,t|mc,mc.company_id:=|mc.company_type_id:=
+1647,"title t,cast_info ci",t.id=ci.movie_id,"t.production_year,<,2009,ci.person_id,=,1209139,ci.role_id,=,1",885,42,21.071428571428573,101-1k,t|ci,t.production_year:<|ci.person_id:=|ci.role_id:=
+843,"title t,movie_companies mc",t.id=mc.movie_id,"t.kind_id,=,7,t.production_year,<,2009,mc.company_id,=,72210,mc.company_type_id,=,2",3,63,21.0,<=10,t|mc,t.kind_id:=|t.production_year:<|mc.company_id:=|mc.company_type_id:=

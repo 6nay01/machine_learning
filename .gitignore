@@ -1,0 +1,5 @@
+/.agents
+/.codex
+/.conda-cardinality
+/__pycache__
+/datasets
