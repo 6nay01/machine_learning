@@ -11,6 +11,7 @@ from cardinality_features import build_train_target_features, load_column_stats
 from cardinality_models import (
     XGBRegressorConfig,
     candidate_predictions,
+    default_tail_expert_config,
     make_xgb_params,
 )
 from solve_cardinality import (
@@ -29,7 +30,7 @@ DEFAULT_SEARCH_SPACE: dict[str, list[int | float]] = {
     "main_colsample_bytree": [0.92],
     "main_lambda": [1.2],
     "main_alpha": [0.02],
-    "main_num_boost_round": [3200],
+    "main_num_boost_round": [2600, 3200, 3800],
     "low_eta": [0.035, 0.040],
     "low_max_depth": [4],
     "low_min_child_weight": [1.0],
@@ -37,7 +38,8 @@ DEFAULT_SEARCH_SPACE: dict[str, list[int | float]] = {
     "low_colsample_bytree": [0.95],
     "low_lambda": [1.0],
     "low_alpha": [0.02],
-    "low_num_boost_round": [1200],
+    "low_num_boost_round": [900, 1200, 1500],
+    "tail_num_boost_round": [900, 1200, 1500],
     "residual_eta": [0.025, 0.030],
     "residual_max_depth": [4],
     "residual_min_child_weight": [2.0],
@@ -45,8 +47,17 @@ DEFAULT_SEARCH_SPACE: dict[str, list[int | float]] = {
     "residual_colsample_bytree": [0.90],
     "residual_lambda": [3.0],
     "residual_alpha": [0.10],
-    "residual_num_boost_round": [700],
-    "blend_low_expert_weight_percent": list(range(0, 101, 10)),
+    "residual_num_boost_round": [500, 700, 900],
+    "low_classifier_rounds": [500, 800],
+    "tail_classifier_rounds": [500, 800],
+    "blend_low_expert_weight_percent": [0, 20, 40, 60, 80, 100],
+    "dynamic_low_gate_scale": [0.8, 1.0, 1.2],
+    "dynamic_tail_gate_scale": [0.8, 1.0, 1.2, 1.5],
+    "dynamic_main_gate_scale": [0.8, 1.0, 1.2],
+    "dynamic_low_output_scale": [0.8, 1.0, 1.2],
+    "dynamic_tail_output_scale": [0.8, 1.0, 1.2],
+    "dynamic_residual_mix": [0.7, 1.0],
+    "dynamic_raw_mix": [0.0, 0.3],
 }
 SEARCH_SPACE_KEYS = tuple(DEFAULT_SEARCH_SPACE)
 RESULT_SORT_KEYS = ("mean_q_error", "p95_q_error", "max_q_error", "median_q_error")
@@ -186,6 +197,17 @@ def make_residual_config(trial: dict[str, int | float]) -> XGBRegressorConfig:
     )
 
 
+def make_tail_expert_config(trial: dict[str, int | float]) -> XGBRegressorConfig:
+    config = default_tail_expert_config(int(trial["tail_num_boost_round"]))
+    return XGBRegressorConfig(
+        name="tail_expert_tuned",
+        params=config.params,
+        num_boost_round=int(trial["tail_num_boost_round"]),
+        early_stopping_rounds=config.early_stopping_rounds,
+        verbose_eval=config.verbose_eval,
+    )
+
+
 def evaluate_trial(
     trial_id: int,
     trial: dict[str, int | float],
@@ -205,8 +227,22 @@ def evaluate_trial(
         y_target=None,
         regressor_configs=[make_main_config(trial)],
         low_expert_config=make_low_expert_config(trial),
+        tail_expert_config=make_tail_expert_config(trial),
         residual_config=make_residual_config(trial),
         blend_weight_steps=[int(trial["blend_low_expert_weight_percent"])],
+        aux_rounds={
+            "low10_classifier": int(trial["low_classifier_rounds"]),
+            "tail_classifier": int(trial["tail_classifier_rounds"]),
+        },
+        dynamic_gate_params={
+            "low_gate_scale": float(trial["dynamic_low_gate_scale"]),
+            "tail_gate_scale": float(trial["dynamic_tail_gate_scale"]),
+            "main_gate_scale": float(trial["dynamic_main_gate_scale"]),
+            "low_output_scale": float(trial["dynamic_low_output_scale"]),
+            "tail_output_scale": float(trial["dynamic_tail_output_scale"]),
+            "residual_mix": float(trial["dynamic_residual_mix"]),
+            "raw_mix": float(trial["dynamic_raw_mix"]),
+        },
     )
     candidate_report = pd.DataFrame(candidate_public_metric_rows(truth_df, test_df, predictions))
     selected_candidate = select_candidate_by_metrics(candidate_report)

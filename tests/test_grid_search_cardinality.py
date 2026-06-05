@@ -53,6 +53,10 @@ class GridSearchCardinalityTest(unittest.TestCase):
 
         def fake_candidate_predictions(**kwargs):
             self.assertEqual(kwargs["blend_weight_steps"], [30])
+            self.assertEqual(kwargs["aux_rounds"]["low10_classifier"], 500)
+            self.assertEqual(kwargs["aux_rounds"]["tail_classifier"], 800)
+            self.assertEqual(kwargs["dynamic_gate_params"]["tail_gate_scale"], 1.5)
+            self.assertEqual(kwargs["dynamic_gate_params"]["raw_mix"], 0.3)
             predictions = {
                 "main_tuned": np.log1p(np.array([20.0, 200.0])),
                 "low_expert": np.log1p(np.array([12.0, 120.0])),
@@ -80,6 +84,7 @@ class GridSearchCardinalityTest(unittest.TestCase):
                 "low_lambda": 1.0,
                 "low_alpha": 0.02,
                 "low_num_boost_round": 1200,
+                "tail_num_boost_round": 1500,
                 "residual_eta": 0.03,
                 "residual_max_depth": 4,
                 "residual_min_child_weight": 2.0,
@@ -88,7 +93,16 @@ class GridSearchCardinalityTest(unittest.TestCase):
                 "residual_lambda": 3.0,
                 "residual_alpha": 0.10,
                 "residual_num_boost_round": 700,
+                "low_classifier_rounds": 500,
+                "tail_classifier_rounds": 800,
                 "blend_low_expert_weight_percent": 30,
+                "dynamic_low_gate_scale": 1.0,
+                "dynamic_tail_gate_scale": 1.5,
+                "dynamic_main_gate_scale": 0.8,
+                "dynamic_low_output_scale": 1.2,
+                "dynamic_tail_output_scale": 1.0,
+                "dynamic_residual_mix": 1.0,
+                "dynamic_raw_mix": 0.3,
             }
 
             result, candidate_report, payload = grid_search_cardinality.evaluate_trial(

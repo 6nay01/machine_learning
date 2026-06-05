@@ -16,6 +16,7 @@ GROUP_KEY_ORDER = ["full", "tables_predicates", "tables", "predicates"]
 GROUP_MIN_COUNT = 5
 BLEND_WEIGHT_STEPS = tuple(range(0, 101))
 DYNAMIC_GATE_CANDIDATE = "dynamic_gate"
+HARD_SWITCH_PREFIX = "hard_switch_low10_"
 LOW_GATE_QUANTILE = 0.10
 LOW_EXPERT_QUANTILE = 0.25
 TAIL_FALLBACK_QUANTILE = 0.90
@@ -91,6 +92,27 @@ def add_blend_predictions(
         blend_weight_steps=blend_weight_steps,
     )
 
+
+def hard_switch_candidate_name(low10_threshold_percent: int) -> str:
+    return f"{HARD_SWITCH_PREFIX}{low10_threshold_percent:03d}"
+
+
+def add_hard_switch_prediction(
+    predictions: dict[str, np.ndarray],
+    low_expert_pred: np.ndarray,
+    other_pred: np.ndarray,
+    low10_prob: np.ndarray,
+    low10_threshold: float,
+) -> None:
+    threshold_percent = int(round(low10_threshold * 100.0))
+    use_low_expert = np.asarray(low10_prob, dtype=float) >= float(low10_threshold)
+    predictions[hard_switch_candidate_name(threshold_percent)] = np.where(
+        use_low_expert,
+        np.asarray(low_expert_pred, dtype=float),
+        np.asarray(other_pred, dtype=float),
+    )
+
+
 def make_dmatrix(
     feature_df: pd.DataFrame,
     label: np.ndarray | None = None,
@@ -143,8 +165,19 @@ def combine_expert_predictions(
     low_expert_pred: np.ndarray,
     tail_expert_pred: np.ndarray,
     backbone_pred: np.ndarray,
+    low_scale: float = 1.0,
+    tail_scale: float = 1.0,
+    main_scale: float = 1.0,
 ) -> np.ndarray:
-    low_weight, tail_weight, main_weight = normalized_gate_weights(low_prob, tail_prob)
+    low_weight, tail_weight, main_weight = normalized_gate_weights(
+        np.asarray(low_prob, dtype=float) * float(low_scale),
+        np.asarray(tail_prob, dtype=float) * float(tail_scale),
+    )
+    weighted_main = main_weight * float(main_scale)
+    total = np.maximum(low_weight + tail_weight + weighted_main, 1e-12)
+    low_weight = low_weight / total
+    tail_weight = tail_weight / total
+    main_weight = weighted_main / total
     return (
         low_weight * np.asarray(low_expert_pred, dtype=float)
         + tail_weight * np.asarray(tail_expert_pred, dtype=float)
@@ -252,6 +285,23 @@ def default_residual_config(max_rounds: int = 900) -> XGBRegressorConfig:
         num_boost_round=max_rounds,
         early_stopping_rounds=0,
         verbose_eval=150,
+    )
+
+
+def default_tail_expert_config(max_rounds: int = 1200) -> XGBRegressorConfig:
+    return XGBRegressorConfig(
+        name="tail_expert_model",
+        params=make_xgb_params(
+            eta=0.035,
+            max_depth=5,
+            min_child_weight=1.0,
+            subsample=0.95,
+            colsample_bytree=0.95,
+            **{"lambda": 1.2, "alpha": 0.02},
+        ),
+        num_boost_round=max_rounds,
+        early_stopping_rounds=100,
+        verbose_eval=200,
     )
 
 
@@ -669,17 +719,28 @@ def candidate_predictions(
     aux_rounds: dict[str, int] | None = None,
     regressor_configs: list[XGBRegressorConfig] | None = None,
     low_expert_config: XGBRegressorConfig | None = None,
+    tail_expert_config: XGBRegressorConfig | None = None,
     residual_config: XGBRegressorConfig | None = None,
     blend_weight_steps: Iterable[int] | None = None,
+    dynamic_gate_params: dict[str, float] | None = None,
 ) -> tuple[dict[str, np.ndarray], dict[str, float | str]]:
     y_train_log = np.log1p(y_train.astype(float))
     y_target_log = None if y_target is None else np.log1p(y_target.astype(float))
     predictions: dict[str, np.ndarray] = {}
     metrics: dict[str, float | str] = {}
     aux_rounds = aux_rounds or {}
+    dynamic_gate_params = dynamic_gate_params or {}
     quantiles = cardinality_quantiles(y_train)
     train_weight = build_tail_sample_weights(y_train, quantiles)
     target_weight = None if y_target is None else build_tail_sample_weights(y_target, quantiles)
+    low_gate_scale = float(dynamic_gate_params.get("low_gate_scale", 1.0))
+    tail_gate_scale = float(dynamic_gate_params.get("tail_gate_scale", 1.0))
+    main_gate_scale = float(dynamic_gate_params.get("main_gate_scale", 1.0))
+    low_output_scale = float(dynamic_gate_params.get("low_output_scale", 1.0))
+    tail_output_scale = float(dynamic_gate_params.get("tail_output_scale", 1.0))
+    residual_mix = float(dynamic_gate_params.get("residual_mix", 1.0))
+    raw_mix = float(dynamic_gate_params.get("raw_mix", 0.0))
+    backbone_mix_total = max(residual_mix + raw_mix, 1e-12)
 
     configs = regressor_configs or candidate_regressor_configs()
     if round_overrides is not None:
@@ -688,6 +749,7 @@ def candidate_predictions(
             for config in configs
         ]
     low_expert_config = low_expert_config or default_low_expert_config(aux_rounds.get("low_expert", 1600))
+    tail_expert_config = tail_expert_config or default_tail_expert_config(aux_rounds.get("tail_expert", 1200))
     residual_config = residual_config or default_residual_config(aux_rounds.get("residual", 900))
 
     main_results = [
@@ -725,6 +787,13 @@ def candidate_predictions(
     metrics["low_expert_threshold"] = quantiles["low_expert"]
     metrics["tail_fallback_threshold"] = quantiles["tail_fallback"]
     metrics["tail_gate_threshold"] = quantiles["tail_gate"]
+    metrics["dynamic_low_gate_scale"] = low_gate_scale
+    metrics["dynamic_tail_gate_scale"] = tail_gate_scale
+    metrics["dynamic_main_gate_scale"] = main_gate_scale
+    metrics["dynamic_low_output_scale"] = low_output_scale
+    metrics["dynamic_tail_output_scale"] = tail_output_scale
+    metrics["dynamic_residual_mix"] = residual_mix
+    metrics["dynamic_raw_mix"] = raw_mix
     raw_pred = selected_main.target_log_pred
     predictions["eq_stats_main"] = raw_pred
 
@@ -767,12 +836,14 @@ def candidate_predictions(
         y_target_log,
         y_train,
         quantiles,
-        config=low_expert_config,
+        config=tail_expert_config,
     )
     low_weight = np.clip(low_prob, 0.0, 1.0)
     tail_weight = np.clip(tail_prob, 0.0, 1.0)
-    predictions["low_expert"] = low_weight * low_expert_pred + (1.0 - low_weight) * raw_pred
-    predictions["tail_expert"] = tail_weight * tail_expert_pred + (1.0 - tail_weight) * raw_pred
+    scaled_low_expert_pred = low_output_scale * low_expert_pred + (1.0 - low_output_scale) * raw_pred
+    scaled_tail_expert_pred = tail_output_scale * tail_expert_pred + (1.0 - tail_output_scale) * raw_pred
+    predictions["low_expert"] = low_weight * scaled_low_expert_pred + (1.0 - low_weight) * raw_pred
+    predictions["tail_expert"] = tail_weight * scaled_tail_expert_pred + (1.0 - tail_weight) * raw_pred
 
     residual_pred = raw_pred
     residual_train_base_pred = fit_oof_base_predictions(
@@ -795,12 +866,18 @@ def candidate_predictions(
             config=residual_config,
         )
         predictions["residual"] = residual_pred
+        backbone_pred = (
+            residual_mix * residual_pred + raw_mix * raw_pred
+        ) / backbone_mix_total
         predictions[DYNAMIC_GATE_CANDIDATE] = combine_expert_predictions(
             low_prob=low_prob,
             tail_prob=tail_prob,
-            low_expert_pred=low_expert_pred,
-            tail_expert_pred=tail_expert_pred,
-            backbone_pred=residual_pred,
+            low_expert_pred=scaled_low_expert_pred,
+            tail_expert_pred=scaled_tail_expert_pred,
+            backbone_pred=backbone_pred,
+            low_scale=low_gate_scale,
+            tail_scale=tail_gate_scale,
+            main_scale=main_gate_scale,
         )
         add_blend_predictions(
             predictions,
@@ -808,13 +885,25 @@ def candidate_predictions(
             "residual",
             blend_weight_steps=blend_weight_steps,
         )
+        for threshold in aux_rounds.get("hard_switch_thresholds", (0.70, 0.80, 0.90)):
+            add_hard_switch_prediction(
+                predictions,
+                predictions["low_expert"],
+                predictions["residual"],
+                low_prob,
+                float(threshold),
+            )
     else:
+        backbone_pred = raw_pred
         predictions[DYNAMIC_GATE_CANDIDATE] = combine_expert_predictions(
             low_prob=low_prob,
             tail_prob=tail_prob,
-            low_expert_pred=low_expert_pred,
-            tail_expert_pred=tail_expert_pred,
-            backbone_pred=raw_pred,
+            low_expert_pred=scaled_low_expert_pred,
+            tail_expert_pred=scaled_tail_expert_pred,
+            backbone_pred=backbone_pred,
+            low_scale=low_gate_scale,
+            tail_scale=tail_gate_scale,
+            main_scale=main_gate_scale,
         )
         add_blend_predictions_from_arrays(
             predictions,
@@ -822,5 +911,13 @@ def candidate_predictions(
             raw_pred,
             blend_weight_steps=blend_weight_steps,
         )
+        for threshold in aux_rounds.get("hard_switch_thresholds", (0.70, 0.80, 0.90)):
+            add_hard_switch_prediction(
+                predictions,
+                predictions["low_expert"],
+                raw_pred,
+                low_prob,
+                float(threshold),
+            )
         
     return predictions, metrics
