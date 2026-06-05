@@ -1,8 +1,8 @@
 {
-  "public_truth_mean_q_error": 2.4189680087731382,
-  "public_truth_median_q_error": 1.1829850242501305,
-  "public_truth_p90_q_error": 3.4566787003610107,
-  "public_truth_p95_q_error": 7.249720044792833,
-  "public_truth_max_q_error": 226.33333333333334,
-  "public_truth_rows": 1881.0
+  "public_truth_mean_q_error": 2.6503149267325172,
+  "public_truth_median_q_error": 1.1785530476607033,
+  "public_truth_p90_q_error": 3.2808461538461566,
+  "public_truth_p95_q_error": 6.667948717948723,
+  "public_truth_max_q_error": 1149.924,
+  "public_truth_rows": 5000.0
 }

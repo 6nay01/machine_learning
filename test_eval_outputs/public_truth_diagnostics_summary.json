@@ -1,0 +1,8 @@
+{
+  "public_truth_mean_q_error": 2.6520729771994076,
+  "public_truth_median_q_error": 1.1786876353855762,
+  "public_truth_p90_q_error": 3.276250225116641,
+  "public_truth_p95_q_error": 6.669047619047628,
+  "public_truth_max_q_error": 1157.504,
+  "public_truth_rows": 5000.0
+}

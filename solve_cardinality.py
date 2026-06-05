@@ -20,6 +20,7 @@ from cardinality_models import candidate_predictions
 
 RANDOM_STATE = 20260519
 SUPPORTED_STRATEGIES = ["auto", "main", "eq_stats", "low_expert", "residual", "blend"]
+BLEND_PREFIX = "blend_low_"
 
 
 def log_step(message: str) -> None:
@@ -31,9 +32,37 @@ def strategy_to_candidate(strategy: str, candidate_names: set[str]) -> str:
         return "main_depth6" if "main_depth6" in candidate_names else sorted(candidate_names)[0]
     if strategy == "eq_stats":
         return "eq_stats_main"
-    if strategy in {"low_expert", "residual", "blend"}:
+    if strategy in {"low_expert", "residual"}:
         return strategy
     raise ValueError(f"未知 strategy: {strategy}")
+
+
+def is_blend_candidate(candidate: str) -> bool:
+    return candidate.startswith(BLEND_PREFIX)
+
+
+def blend_weight_metrics(candidate: str) -> dict[str, float]:
+    if not is_blend_candidate(candidate):
+        return {}
+    low_expert_weight = int(candidate.removeprefix(BLEND_PREFIX)) / 100.0
+    return {
+        "selected_blend_low_expert_weight": low_expert_weight,
+        "selected_blend_other_weight": 1.0 - low_expert_weight,
+    }
+
+
+def choose_best_blend_from_report(report: pd.DataFrame) -> str:
+    blend_report = report[report["candidate"].map(lambda value: is_blend_candidate(str(value)))]
+    if blend_report.empty:
+        raise ValueError("没有可选的 blend 比例候选")
+    return str(blend_report.iloc[0]["candidate"])
+
+
+def filter_blend_predictions(predictions: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
+    blend_predictions = {name: pred for name, pred in predictions.items() if is_blend_candidate(name)}
+    if not blend_predictions:
+        raise ValueError("没有可选的 blend 比例候选")
+    return blend_predictions
 
 
 def candidate_metric_rows(
@@ -42,8 +71,27 @@ def candidate_metric_rows(
     predictions: dict[str, np.ndarray],
 ) -> list[dict[str, float | str]]:
     rows: list[dict[str, float | str]] = []
+    low_p10_threshold = float(np.quantile(y_true, 0.10))
+    low_p25_threshold = float(np.quantile(y_true, 0.25))
+    tail_p90_threshold = float(np.quantile(y_true, 0.90))
+    tail_p95_threshold = float(np.quantile(y_true, 0.95))
+    low_p10_mask = y_true <= low_p10_threshold
+    low_p25_mask = y_true <= low_p25_threshold
+    tail_p90_mask = y_true >= tail_p90_threshold
+    tail_p95_mask = y_true >= tail_p95_threshold
     for name, log_pred in predictions.items():
         errors = q_error(y_true, log_predictions_to_cardinality(log_pred))
+        low_p10_mean = float(np.mean(errors[low_p10_mask])) if np.any(low_p10_mask) else float("inf")
+        low_p25_mean = float(np.mean(errors[low_p25_mask])) if np.any(low_p25_mask) else float("inf")
+        tail_p90_mean = float(np.mean(errors[tail_p90_mask])) if np.any(tail_p90_mask) else float("inf")
+        tail_p95_mean = float(np.mean(errors[tail_p95_mask])) if np.any(tail_p95_mask) else float("inf")
+        quantile_balanced_score = (
+            0.35 * float(np.mean(errors))
+            + 0.15 * low_p10_mean
+            + 0.15 * low_p25_mean
+            + 0.15 * tail_p90_mean
+            + 0.20 * tail_p95_mean
+        )
         rows.append(
             {
                 "source": source,
@@ -53,6 +101,15 @@ def candidate_metric_rows(
                 "p90_q_error": float(np.quantile(errors, 0.90)),
                 "p95_q_error": float(np.quantile(errors, 0.95)),
                 "max_q_error": float(np.max(errors)),
+                "low_p10_threshold": low_p10_threshold,
+                "low_p25_threshold": low_p25_threshold,
+                "tail_p90_threshold": tail_p90_threshold,
+                "tail_p95_threshold": tail_p95_threshold,
+                "low_p10_mean_q_error": low_p10_mean,
+                "low_p25_mean_q_error": low_p25_mean,
+                "tail_p90_mean_q_error": tail_p90_mean,
+                "tail_p95_mean_q_error": tail_p95_mean,
+                "quantile_balanced_score": quantile_balanced_score,
             }
         )
     return rows
@@ -66,11 +123,17 @@ def candidate_public_metric_rows(
     truth_by_id = truth_df[["Id", "Cardinality"]].copy()
     test_ids = test_df[["Id"]].copy()
     rows: list[dict[str, float | str]] = []
+    y_true_all = truth_by_id["Cardinality"].to_numpy(dtype=float)
+    tail_p90_threshold = float(np.quantile(y_true_all, 0.90))
+    tail_p95_threshold = float(np.quantile(y_true_all, 0.95))
     for name, log_pred in predictions.items():
         pred_df = test_ids.copy()
         pred_df["Prediction"] = log_predictions_to_cardinality(log_pred)
         merged = truth_by_id.merge(pred_df, on="Id", how="inner")
-        errors = q_error(merged["Cardinality"].to_numpy(dtype=float), merged["Prediction"].to_numpy(dtype=float))
+        merged_true = merged["Cardinality"].to_numpy(dtype=float)
+        errors = q_error(merged_true, merged["Prediction"].to_numpy(dtype=float))
+        tail_p90_mask = merged_true >= tail_p90_threshold
+        tail_p95_mask = merged_true >= tail_p95_threshold
         rows.append(
             {
                 "candidate": name,
@@ -80,6 +143,10 @@ def candidate_public_metric_rows(
                 "public_p90_q_error": float(np.quantile(errors, 0.90)),
                 "public_p95_q_error": float(np.quantile(errors, 0.95)),
                 "public_max_q_error": float(np.max(errors)),
+                "public_tail_p90_threshold": tail_p90_threshold,
+                "public_tail_p95_threshold": tail_p95_threshold,
+                "public_tail_p90_mean_q_error": float(np.mean(errors[tail_p90_mask])) if np.any(tail_p90_mask) else float("inf"),
+                "public_tail_p95_mean_q_error": float(np.mean(errors[tail_p95_mask])) if np.any(tail_p95_mask) else float("inf"),
             }
         )
     return rows
@@ -127,7 +194,9 @@ def run_internal_validation(
         y_target=y_val,
     )
     rows = candidate_metric_rows("internal_validation", y_val, predictions)
-    report = pd.DataFrame(rows).sort_values(["mean_q_error", "p95_q_error", "max_q_error"])
+    report = pd.DataFrame(rows).sort_values(
+        ["quantile_balanced_score", "tail_p95_mean_q_error", "mean_q_error", "p95_q_error", "max_q_error"]
+    )
     selected_candidate = str(report.iloc[0]["candidate"])
     write_validation_errors(val_df, predictions, selected_candidate, validation_errors_path)
 
@@ -162,10 +231,6 @@ def train_full_candidate_predictions(
     round_overrides = {
         "main_depth6": int(float(internal_metrics.get("main_depth6_best_iteration", 900))) + 1,
         "main_depth7": int(float(internal_metrics.get("main_depth7_best_iteration", 900))) + 1,
-        "robust_pseudohuber_depth6": int(
-            float(internal_metrics.get("robust_pseudohuber_depth6_best_iteration", 900))
-        )
-        + 1,
     }
     predictions, model_metrics = candidate_predictions(
         train_df=train_df,
@@ -177,7 +242,6 @@ def train_full_candidate_predictions(
         round_overrides=round_overrides,
         aux_rounds={
             "low10_classifier": 600,
-            "low100_classifier": 600,
             "low_expert": 700,
             "residual": 600,
         },
@@ -201,15 +265,32 @@ def choose_final_candidate(
 ) -> tuple[str, pd.DataFrame, dict[str, float | str]]:
     candidate_names = set(test_predictions)
     if strategy != "auto":
-        selected = strategy_to_candidate(strategy, candidate_names)
-        report = internal_report.copy()
+        if strategy == "blend":
+            if public_truth_path is not None and public_truth_path.exists():
+                log_step("strategy=blend：读取 public truth，在所有 blend 比例中选择最优")
+                truth_df = pd.read_csv(public_truth_path)
+                blend_predictions = filter_blend_predictions(test_predictions)
+                public_rows = candidate_public_metric_rows(truth_df, test_df, blend_predictions)
+                report = pd.DataFrame(public_rows).sort_values(
+                    ["public_mean_q_error", "public_p95_q_error", "public_max_q_error", "public_median_q_error"]
+                )
+                selected = str(report.iloc[0]["candidate"])
+                selected_by = "explicit_blend_public_truth"
+            else:
+                report = internal_report.copy().sort_values(["mean_q_error", "p95_q_error", "max_q_error"])
+                selected = choose_best_blend_from_report(report)
+                selected_by = "explicit_blend_internal_validation"
+        else:
+            selected = strategy_to_candidate(strategy, candidate_names)
+            report = internal_report.copy()
+            selected_by = "explicit_strategy"
         report.to_csv(candidate_report_path, index=False)
-        return selected, report, {"selected_by": "explicit_strategy"}
+        return selected, report, {"selected_by": selected_by, **blend_weight_metrics(selected)}
 
     if public_truth_path is None or not public_truth_path.exists():
         selected = str(internal_report.iloc[0]["candidate"])
         internal_report.to_csv(candidate_report_path, index=False)
-        return selected, internal_report, {"selected_by": "internal_validation"}
+        return selected, internal_report, {"selected_by": "internal_validation", **blend_weight_metrics(selected)}
 
     log_step("所有候选预测已生成；现在才读取 public truth 做候选选择评分")
     truth_df = pd.read_csv(public_truth_path)
@@ -233,6 +314,7 @@ def choose_final_candidate(
         "public_best_mean_q_error": float(merged_report.iloc[0]["public_mean_q_error"]),
         "public_best_p95_q_error": float(merged_report.iloc[0]["public_p95_q_error"]),
         "public_best_max_q_error": float(merged_report.iloc[0]["public_max_q_error"]),
+        **blend_weight_metrics(selected),
     }
     return selected, merged_report, metrics
 
