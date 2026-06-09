@@ -182,6 +182,50 @@ class GridSearchCardinalityTest(unittest.TestCase):
         self.assertIsNotNone(best)
         self.assertEqual(best["trial_id"], 3)
 
+    def test_build_pending_trials_skips_completed_trials(self) -> None:
+        trials = [
+            {"main_eta": 0.03, "blend_low_expert_weight_percent": 30},
+            {"main_eta": 0.035, "blend_low_expert_weight_percent": 40},
+            {"main_eta": 0.04, "blend_low_expert_weight_percent": 50},
+        ]
+        completed_trials = {
+            ("0.03", "30"): {"trial_id": 1},
+            ("0.04", "50"): {"trial_id": 3},
+        }
+
+        pending = grid_search_cardinality.build_pending_trials(
+            trials,
+            completed_trials,
+            search_space_keys=("main_eta", "blend_low_expert_weight_percent"),
+        )
+
+        self.assertEqual(
+            pending,
+            [(2, {"main_eta": 0.035, "blend_low_expert_weight_percent": 40})],
+        )
+
+    def test_validate_resume_trials_rejects_unexpected_completed_trials(self) -> None:
+        trials = [
+            {"main_eta": 0.03, "blend_low_expert_weight_percent": 30},
+            {"main_eta": 0.035, "blend_low_expert_weight_percent": 40},
+        ]
+        completed_trials = {
+            ("0.03", "30"): {"trial_id": 1},
+            ("0.04", "50"): {"trial_id": 2},
+        }
+
+        with self.assertRaisesRegex(ValueError, "无法 resume"):
+            grid_search_cardinality.validate_resume_trials(
+                completed_trials,
+                trials,
+                search_space_keys=("main_eta", "blend_low_expert_weight_percent"),
+            )
+
+    def test_format_duration_covers_seconds_minutes_and_hours(self) -> None:
+        self.assertEqual(grid_search_cardinality.format_duration(12.34), "12.3s")
+        self.assertEqual(grid_search_cardinality.format_duration(125.0), "2m05s")
+        self.assertEqual(grid_search_cardinality.format_duration(3723.0), "1h02m03s")
+
 
 if __name__ == "__main__":
     unittest.main()

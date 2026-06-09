@@ -61,6 +61,66 @@ DEFAULT_SEARCH_SPACE: dict[str, list[int | float]] = {
 }
 SEARCH_SPACE_KEYS = tuple(DEFAULT_SEARCH_SPACE)
 RESULT_SORT_KEYS = ("mean_q_error", "p95_q_error", "max_q_error", "median_q_error")
+BASELINE_TRIAL: dict[str, int | float] = {
+    "main_eta": 0.03,
+    "main_max_depth": 7,
+    "main_min_child_weight": 1.5,
+    "main_subsample": 0.92,
+    "main_colsample_bytree": 0.92,
+    "main_lambda": 1.2,
+    "main_alpha": 0.02,
+    "main_num_boost_round": 3200,
+    "low_eta": 0.04,
+    "low_max_depth": 4,
+    "low_min_child_weight": 1.0,
+    "low_subsample": 0.95,
+    "low_colsample_bytree": 0.95,
+    "low_lambda": 1.0,
+    "low_alpha": 0.02,
+    "low_num_boost_round": 1200,
+    "tail_num_boost_round": 1200,
+    "residual_eta": 0.03,
+    "residual_max_depth": 4,
+    "residual_min_child_weight": 2.0,
+    "residual_subsample": 0.90,
+    "residual_colsample_bytree": 0.90,
+    "residual_lambda": 3.0,
+    "residual_alpha": 0.10,
+    "residual_num_boost_round": 700,
+    "low_classifier_rounds": 800,
+    "tail_classifier_rounds": 800,
+    "blend_low_expert_weight_percent": 20,
+    "dynamic_low_gate_scale": 1.0,
+    "dynamic_tail_gate_scale": 1.0,
+    "dynamic_main_gate_scale": 1.0,
+    "dynamic_low_output_scale": 1.0,
+    "dynamic_tail_output_scale": 1.0,
+    "dynamic_residual_mix": 1.0,
+    "dynamic_raw_mix": 0.0,
+}
+SEARCH_PROFILES: dict[str, dict[str, list[int | float]]] = {
+    "full": DEFAULT_SEARCH_SPACE,
+    "gate_focus": {
+        "low_classifier_rounds": [500, 800],
+        "tail_classifier_rounds": [500, 800, 1100],
+        "blend_low_expert_weight_percent": [0, 10, 20, 30, 40],
+        "dynamic_low_gate_scale": [0.8, 1.0, 1.2],
+        "dynamic_tail_gate_scale": [0.8, 1.0, 1.2, 1.5],
+        "dynamic_main_gate_scale": [0.8, 1.0, 1.2],
+        "dynamic_low_output_scale": [0.8, 1.0, 1.2],
+        "dynamic_tail_output_scale": [0.8, 1.0, 1.2],
+        "dynamic_residual_mix": [0.7, 1.0],
+        "dynamic_raw_mix": [0.0, 0.2, 0.3],
+    },
+    "round_focus": {
+        "main_num_boost_round": [2800, 3200, 3600],
+        "low_num_boost_round": [900, 1200, 1500],
+        "tail_num_boost_round": [900, 1200, 1500],
+        "residual_num_boost_round": [500, 700, 900],
+        "low_classifier_rounds": [500, 800],
+        "tail_classifier_rounds": [800, 1100],
+    },
+}
 
 
 def log_step(message: str) -> None:
@@ -76,6 +136,19 @@ def iter_search_trials(
     if max_trials is not None:
         values_product = islice(values_product, max_trials)
     return [dict(zip(keys, values, strict=True)) for values in values_product]
+
+
+def build_profile_search_space(profile: str) -> dict[str, list[int | float]]:
+    if profile not in SEARCH_PROFILES:
+        raise ValueError(f"未知搜索 profile: {profile}")
+    profile_space = SEARCH_PROFILES[profile]
+    search_space: dict[str, list[int | float]] = {}
+    for key in SEARCH_SPACE_KEYS:
+        if key in profile_space:
+            search_space[key] = profile_space[key]
+        else:
+            search_space[key] = [BASELINE_TRIAL[key]]
+    return search_space
 
 
 def count_total_trials(search_space: dict[str, list[int | float]]) -> int:
@@ -101,6 +174,59 @@ def trial_key_from_values(trial: dict[str, Any], search_space_keys: tuple[str, .
     return tuple(canonicalize_trial_scalar(trial[key]) for key in search_space_keys)
 
 
+def format_duration(seconds: float) -> str:
+    normalized_seconds = max(float(seconds), 0.0)
+    if normalized_seconds < 60.0:
+        return f"{normalized_seconds:.1f}s"
+
+    rounded_seconds = int(round(normalized_seconds))
+    minutes, second_part = divmod(rounded_seconds, 60)
+    if minutes < 60:
+        return f"{minutes}m{second_part:02d}s"
+
+    hours, minute_part = divmod(minutes, 60)
+    return f"{hours}h{minute_part:02d}m{second_part:02d}s"
+
+
+def validate_resume_trials(
+    completed_trials: dict[tuple[str, ...], dict[str, Any]],
+    trials: list[dict[str, int | float]],
+    search_space_keys: tuple[str, ...] = SEARCH_SPACE_KEYS,
+) -> None:
+    expected_trial_keys = {
+        trial_key_from_values(trial, search_space_keys)
+        for trial in trials
+    }
+    unexpected_trial_keys = [
+        completed_key
+        for completed_key in completed_trials
+        if completed_key not in expected_trial_keys
+    ]
+    if not unexpected_trial_keys:
+        return
+
+    preview = ", ".join(
+        "/".join(key[:3]) + ("/..." if len(key) > 3 else "")
+        for key in unexpected_trial_keys[:3]
+    )
+    raise ValueError(
+        "已有 trial 文件包含不属于当前搜索空间的记录，无法 resume。"
+        f"请检查 --profile/--max-trials/--output-dir 是否一致；异常记录数={len(unexpected_trial_keys)}；示例={preview}"
+    )
+
+
+def build_pending_trials(
+    trials: list[dict[str, int | float]],
+    completed_trials: dict[tuple[str, ...], dict[str, Any]],
+    search_space_keys: tuple[str, ...] = SEARCH_SPACE_KEYS,
+) -> list[tuple[int, dict[str, int | float]]]:
+    return [
+        (index, trial)
+        for index, trial in enumerate(trials, start=1)
+        if trial_key_from_values(trial, search_space_keys) not in completed_trials
+    ]
+
+
 def result_sort_tuple(result: dict[str, Any]) -> tuple[float, float, float, float]:
     return tuple(float(result[key]) for key in RESULT_SORT_KEYS)
 
@@ -124,7 +250,10 @@ def load_completed_trials(
     existing_rows = existing_df.to_dict("records")
     completed: dict[tuple[str, ...], dict[str, Any]] = {}
     for row in existing_rows:
-        completed[trial_key_from_values(row, search_space_keys)] = row
+        key = trial_key_from_values(row, search_space_keys)
+        if key in completed:
+            raise ValueError(f"已有 trial 文件存在重复参数组合，无法 resume：{key}")
+        completed[key] = row
     return existing_rows, completed
 
 
@@ -284,7 +413,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--sample", type=Path, default=Path("sample_submission.csv"))
     parser.add_argument("--stats", type=Path, default=Path("column_min_max_vals.csv"))
     parser.add_argument("--public-truth", type=Path, default=Path("test_with_true_cardinality.csv"))
-    parser.add_argument("--output-dir", type=Path, default=Path("grid_search_outputs"))
+    parser.add_argument("--output-dir", type=Path, default=Path("grid_search_outputs_v2"))
+    parser.add_argument("--profile", choices=tuple(SEARCH_PROFILES), default="gate_focus")
     parser.add_argument("--max-trials", type=int, default=60)
     parser.add_argument("--resume", action="store_true")
     return parser.parse_args()
@@ -303,13 +433,14 @@ def main() -> None:
     truth_df = pd.read_csv(args.public_truth)
     stats = load_column_stats(args.stats)
     y_train = train_df["Cardinality"]
+    search_space = build_profile_search_space(args.profile)
 
     log_step("开始构造全量训练/测试特征，后续所有 trial 复用这份特征")
     train_features, test_features, _, _ = build_train_target_features(train_df, test_df, stats)
 
-    total_trials = count_total_trials(DEFAULT_SEARCH_SPACE)
-    trials = iter_search_trials(DEFAULT_SEARCH_SPACE, max_trials=args.max_trials)
-    log_step(f"参数组合总数={total_trials}，本次实际执行={len(trials)}")
+    total_trials = count_total_trials(search_space)
+    trials = iter_search_trials(search_space, max_trials=args.max_trials)
+    log_step(f"profile={args.profile}，参数组合总数={total_trials}，本次实际执行={len(trials)}")
 
     trials_path = output_dir / "grid_search_trials.csv"
     trial_rows: list[dict[str, Any]] = []
@@ -322,17 +453,24 @@ def main() -> None:
     best_result = select_best_result(trial_rows)
     best_candidate_report: pd.DataFrame | None = None
     best_predictions: dict[str, object] | None = None
-    pending_trials = [
-        (index, trial)
-        for index, trial in enumerate(trials, start=1)
-        if trial_key_from_values(trial) not in completed_trials
-    ]
     if args.resume:
-        log_step(f"剩余待执行 trial 数={len(pending_trials)}")
+        validate_resume_trials(completed_trials, trials)
+
+    pending_trials = build_pending_trials(trials, completed_trials)
+    completed_before_resume = len(completed_trials)
+    log_step(
+        f"当前进度：已完成 {completed_before_resume}/{len(trials)}，待执行 {len(pending_trials)}"
+    )
+
+    executed_this_run = 0
+    trial_time_total_seconds = 0.0
 
     for index, trial in pending_trials:
+        completed_total_before_trial = completed_before_resume + executed_this_run
+        trial_started = perf_counter()
         log_step(
-            f"执行 trial {index}/{len(trials)}："
+            f"执行 trial {index}/{len(trials)} "
+            f"(已完成 {completed_total_before_trial}/{len(trials)})："
             f"main_depth={trial['main_max_depth']} "
             f"main_eta={trial['main_eta']} "
             f"low_eta={trial['low_eta']} "
@@ -353,6 +491,13 @@ def main() -> None:
         ranked = sort_trial_results(pd.DataFrame(trial_rows))
         ranked.to_csv(trials_path, index=False)
         completed_trials[trial_key_from_values(trial)] = result
+        executed_this_run += 1
+        trial_elapsed_seconds = perf_counter() - trial_started
+        trial_time_total_seconds += trial_elapsed_seconds
+        average_trial_seconds = trial_time_total_seconds / executed_this_run
+        remaining_trials = len(pending_trials) - executed_this_run
+        elapsed_seconds = perf_counter() - started
+        best_mean_q_error = float(best_result["mean_q_error"]) if best_result is not None else float("inf")
 
         if best_result is None or result_sort_tuple(result) < result_sort_tuple(best_result):
             best_result = result
@@ -360,6 +505,15 @@ def main() -> None:
                 ["public_mean_q_error", "public_p95_q_error", "public_max_q_error", "public_median_q_error"]
             )
             best_predictions = payload["predictions"]
+            best_mean_q_error = float(best_result["mean_q_error"])
+
+        log_step(
+            f"trial {index} 完成，用时 {format_duration(trial_elapsed_seconds)}；"
+            f"累计耗时 {format_duration(elapsed_seconds)}；"
+            f"平均每 trial {format_duration(average_trial_seconds)}；"
+            f"预计剩余 {format_duration(average_trial_seconds * remaining_trials)}；"
+            f"当前最佳 mean_q_error={best_mean_q_error:.6f}"
+        )
 
     if best_result is None:
         raise RuntimeError("没有执行任何 trial，无法生成最优结果")
@@ -392,7 +546,7 @@ def main() -> None:
 
     best_hyperparams = {
         key: best_result[key]
-        for key in DEFAULT_SEARCH_SPACE
+        for key in SEARCH_SPACE_KEYS
     }
     (output_dir / "best_hyperparams.json").write_text(
         json.dumps(best_hyperparams, indent=2, ensure_ascii=False) + "\n",
@@ -403,9 +557,14 @@ def main() -> None:
         "selected_candidate": selected_candidate,
         "submission_rows": int(len(best_submission)),
         "search_space_total_trials": total_trials,
+        "search_profile": args.profile,
         "executed_trials": len(trial_rows),
+        "completed_trials_before_resume": completed_before_resume,
+        "newly_executed_trials": executed_this_run,
+        "remaining_trials": len(trials) - len(trial_rows),
         "resumed": args.resume,
         "pending_trials_after_resume": len(pending_trials) if args.resume else 0,
+        "average_trial_seconds": round(trial_time_total_seconds / executed_this_run, 3) if executed_this_run else 0.0,
         "elapsed_seconds": round(perf_counter() - started, 3),
         **best_result,
     }

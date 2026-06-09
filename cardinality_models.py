@@ -7,6 +7,7 @@ import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import KFold
 
+from cardinality_eq_calibration import apply_equality_residual_calibrator, fit_equality_residual_calibrator
 from cardinality_evaluation import log_predictions_to_cardinality, q_error
 from cardinality_features import make_query_keys
 
@@ -16,7 +17,7 @@ GROUP_KEY_ORDER = ["full", "tables_predicates", "tables", "predicates"]
 GROUP_MIN_COUNT = 5
 BLEND_WEIGHT_STEPS = tuple(range(0, 101))
 DYNAMIC_GATE_CANDIDATE = "dynamic_gate"
-HARD_SWITCH_PREFIX = "hard_switch_low10_"
+EQ_RESIDUAL_CALIBRATED_CANDIDATE = "eq_residual_calibrated"
 LOW_GATE_QUANTILE = 0.10
 LOW_EXPERT_QUANTILE = 0.25
 TAIL_FALLBACK_QUANTILE = 0.90
@@ -90,26 +91,6 @@ def add_blend_predictions(
         predictions[low_expert_name],
         predictions[other_name],
         blend_weight_steps=blend_weight_steps,
-    )
-
-
-def hard_switch_candidate_name(low10_threshold_percent: int) -> str:
-    return f"{HARD_SWITCH_PREFIX}{low10_threshold_percent:03d}"
-
-
-def add_hard_switch_prediction(
-    predictions: dict[str, np.ndarray],
-    low_expert_pred: np.ndarray,
-    other_pred: np.ndarray,
-    low10_prob: np.ndarray,
-    low10_threshold: float,
-) -> None:
-    threshold_percent = int(round(low10_threshold * 100.0))
-    use_low_expert = np.asarray(low10_prob, dtype=float) >= float(low10_threshold)
-    predictions[hard_switch_candidate_name(threshold_percent)] = np.where(
-        use_low_expert,
-        np.asarray(low_expert_pred, dtype=float),
-        np.asarray(other_pred, dtype=float),
     )
 
 
@@ -334,7 +315,7 @@ def fit_main_model(
 
     best_iteration = config.num_boost_round - 1
     best_score = 0.0
-    if y_target_log is not None:
+    if y_target_log is not None and early_stopping_rounds is not None:
         best_iteration = int(model.best_iteration)
         best_score = float(model.best_score)
     iteration_range = (0, best_iteration + 1)
@@ -367,7 +348,7 @@ def fit_oof_base_predictions(
         fold_weight = None if train_weight is None else np.asarray(train_weight, dtype=float)[fit_idx]
         dtrain = make_dmatrix(fold_train, fold_y, fold_weight)
         dpred = make_dmatrix(fold_pred)
-        rounds = max(250, min(num_rounds, 900))
+        rounds = max(250, int(num_rounds))
         log_step(f"训练残差 OOF 基础预测 fold={fold_idx}/{folds}，rounds={rounds}")
         model = xgb.train(
             params=config.params,
@@ -846,15 +827,27 @@ def candidate_predictions(
     predictions["tail_expert"] = tail_weight * scaled_tail_expert_pred + (1.0 - tail_weight) * raw_pred
 
     residual_pred = raw_pred
-    residual_train_base_pred = fit_oof_base_predictions(
-        selected_main.config,
-        train_features,
-        y_train_log,
-        selected_main.best_iteration + 1,
-        train_weight=train_weight,
-        folds=aux_rounds.get("oof_folds", 3),
-    )
     if forced_strategy != "skip_residual":
+        residual_train_base_pred = fit_oof_base_predictions(
+            selected_main.config,
+            train_features,
+            y_train_log,
+            selected_main.best_iteration + 1,
+            train_weight=train_weight,
+            folds=aux_rounds.get("oof_folds", 3),
+        )
+        eq_calibrator = fit_equality_residual_calibrator(
+            train_df,
+            y_train_log,
+            residual_train_base_pred,
+        )
+        eq_calibrated_pred, eq_calibration_metrics = apply_equality_residual_calibrator(
+            target_df,
+            raw_pred,
+            eq_calibrator,
+        )
+        predictions[EQ_RESIDUAL_CALIBRATED_CANDIDATE] = eq_calibrated_pred
+        metrics.update(eq_calibration_metrics)
         _, residual_pred = fit_residual_regressor(
             train_features,
             target_features,
@@ -885,14 +878,6 @@ def candidate_predictions(
             "residual",
             blend_weight_steps=blend_weight_steps,
         )
-        for threshold in aux_rounds.get("hard_switch_thresholds", (0.70, 0.80, 0.90)):
-            add_hard_switch_prediction(
-                predictions,
-                predictions["low_expert"],
-                predictions["residual"],
-                low_prob,
-                float(threshold),
-            )
     else:
         backbone_pred = raw_pred
         predictions[DYNAMIC_GATE_CANDIDATE] = combine_expert_predictions(
@@ -911,13 +896,5 @@ def candidate_predictions(
             raw_pred,
             blend_weight_steps=blend_weight_steps,
         )
-        for threshold in aux_rounds.get("hard_switch_thresholds", (0.70, 0.80, 0.90)):
-            add_hard_switch_prediction(
-                predictions,
-                predictions["low_expert"],
-                raw_pred,
-                low_prob,
-                float(threshold),
-            )
         
     return predictions, metrics
