@@ -1,0 +1,101 @@
+# 模型与训练重要超参与复现设置（从代码自动提取）
+
+global:
+  random_state: 20260519
+  final_blend_low_expert_weight_percent: 20
+  rare_equality_max_count: 3
+  equality_stats_min_count: 2
+  unseen_eq_switch_candidate: switch_unseen_eq
+
+features:
+  feature_dim: 261
+  categorical_cols:
+    - table_combo
+    - join_combo
+    - predicate_signature
+    - full_signature
+
+main_model:
+  # 来源: candidate_regressor_configs() / fit_main_model()
+  objective: reg:squarederror
+  eval_metric: rmse
+  tree_method: hist
+  eta: 0.03
+  max_depth: 7
+  min_child_weight: 1.5
+  subsample: 0.92
+  colsample_bytree: 0.92
+  lambda: 1.2
+  alpha: 0.02
+  num_boost_round: 3200
+  early_stopping_rounds: 160
+  verbose_eval: 150
+
+classifiers:
+  # low10 / low100 来源: classifier_params()
+  objective: binary:logistic
+  eval_metric: logloss
+  eta: 0.035
+  max_depth: 5
+  min_child_weight: 2.0
+  subsample: 0.9
+  colsample_bytree: 0.9
+  lambda: 2.0
+  alpha: 0.05
+  # 训练轮数在全量训练时通过 aux_rounds 传入
+
+low_expert:
+  # 来源: fit_low_cardinality_regressor()
+  eta: 0.04
+  max_depth: 4
+  min_child_weight: 1.0
+  subsample: 0.95
+  colsample_bytree: 0.95
+  lambda: 1.0
+  alpha: 0.02
+  default_max_rounds: 1200
+
+rare_eq_expert:
+  # 来源: fit_rare_equality_regressor()
+  eta: 0.035
+  max_depth: 5
+  min_child_weight: 1.0
+  subsample: 0.95
+  colsample_bytree: 0.95
+  lambda: 1.0
+  alpha: 0.02
+  default_max_rounds: 1200
+
+residual:
+  # 来源: fit_residual_regressor()
+  eta: 0.03
+  max_depth: 4
+  min_child_weight: 2.0
+  subsample: 0.9
+  colsample_bytree: 0.9
+  lambda: 3.0
+  alpha: 0.10
+  default_max_rounds: 700
+
+training:
+  # OOF / folds
+  oof_folds: 3
+  oof_rounds_min: 250
+  oof_rounds_max: 900
+
+  # 辅助模型在全量训练时的轮数（见 train_full_candidate_predictions()）
+  aux_rounds:
+    low10_classifier: 600
+    low100_classifier: 600
+    low_expert: 700
+    residual: 600
+
+blending:
+  final_blend_low_expert_weight_percent: 20
+  blend_candidate_name: "blend_low_{:03d}"
+  final_submission_candidate: switch_unseen_eq
+
+notes:
+  - 残差模型用 OOF 预测作为残差标签（避免信息泄露）。
+  - 对未见等值（target 中训练集未包含的等值），用于切换到 rare_eq_expert 的策略在代码中实现。
+  - 所有训练轮数与辅助参数可通过 round_overrides / aux_rounds 在 candidate_predictions() 中传入以便复现或调优。

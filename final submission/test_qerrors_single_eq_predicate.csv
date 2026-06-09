@@ -1,0 +1,461 @@
+Id,Tables,Join Conditions,Predicates,Cardinality_true,Cardinality_pred,QError
+3661,movie_info_idx mi_idx,,"mi_idx.info_type_id,=,112",250,240542,962.168
+4007,cast_info ci,,"ci.person_id,=,2906066",1,71,71.0
+2708,cast_info ci,,"ci.person_id,=,1714578",1,70,70.0
+2819,cast_info ci,,"ci.person_id,=,342950",1,63,63.0
+3826,movie_companies mc,,"mc.company_id,=,99691",1,48,48.0
+1788,cast_info ci,,"ci.person_id,=,2788063",2,86,43.0
+2456,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,6282",7,300,42.85714285714285
+2232,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,3344564",564,14,40.285714285714285
+1292,cast_info ci,,"ci.person_id,=,3205809",2,80,40.0
+4016,movie_keyword mk,,"mk.keyword_id,=,4773",5,174,34.8
+2212,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,703702",1816,55,33.018181818181816
+1094,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,2158680",1313,41,32.02439024390244
+1571,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","mk.keyword_id,=,72594",8595,281,30.587188612099645
+4931,cast_info ci,,"ci.person_id,=,706561",1598,59,27.084745762711865
+343,"title t,cast_info ci,movie_info mi","t.id=ci.movie_id,t.id=mi.movie_id","ci.person_id,=,1520514",8,213,26.625
+4518,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,1710017",2,53,26.5
+4613,cast_info ci,,"ci.person_id,=,3689202",875,36,24.30555555555556
+1112,cast_info ci,,"ci.person_id,=,3232583",3,72,24.0
+3880,cast_info ci,,"ci.person_id,=,1704958",3,70,23.33333333333333
+3250,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,70438",1,23,23.0
+1007,cast_info ci,,"ci.person_id,=,3783904",2,44,22.0
+4888,cast_info ci,,"ci.person_id,=,317402",3,61,20.33333333333333
+1560,cast_info ci,,"ci.person_id,=,2707852",6,122,20.33333333333333
+554,movie_keyword mk,,"mk.keyword_id,=,18607",4347,225,19.32
+2610,movie_companies mc,,"mc.company_id,=,12673",1344,72,18.666666666666668
+4507,movie_companies mc,,"mc.company_id,=,71773",5,91,18.2
+2143,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,629197",1474,81,18.19753086419753
+4429,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,58824",167,10,16.7
+4537,movie_keyword mk,,"mk.keyword_id,=,42707",3,48,16.0
+1705,cast_info ci,,"ci.person_id,=,2346963",792,51,15.529411764705882
+507,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,32858",2,31,15.5
+3037,cast_info ci,,"ci.person_id,=,3778319",3,44,14.666666666666666
+635,movie_companies mc,,"mc.company_id,=,1886",2606,181,14.39779005524862
+4374,"title t,movie_companies mc,cast_info ci","t.id=mc.movie_id,t.id=ci.movie_id","mc.company_id,=,79838",7362,515,14.29514563106796
+239,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,422093",843,62,13.596774193548388
+4492,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,480",1683,126,13.357142857142858
+2300,cast_info ci,,"ci.person_id,=,2524477",578,45,12.844444444444443
+2822,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,2387269",589,46,12.804347826086955
+1657,cast_info ci,,"ci.person_id,=,3461572",3,38,12.666666666666666
+2439,movie_keyword mk,,"mk.keyword_id,=,28588",668,53,12.60377358490566
+4797,cast_info ci,,"ci.person_id,=,1482476",542,46,11.782608695652174
+4975,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,7861",1514,131,11.557251908396946
+1074,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,598",1227,107,11.467289719626168
+4520,movie_keyword mk,,"mk.keyword_id,=,23070",831,75,11.08
+4728,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","mc.company_id,=,4373",8685,785,11.063694267515924
+3022,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,3945",2025,185,10.945945945945946
+1236,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","mk.keyword_id,=,4226",76429,7124,10.728382930937675
+466,cast_info ci,,"ci.person_id,=,2856871",468,46,10.173913043478262
+2376,cast_info ci,,"ci.person_id,=,2503453",501,50,10.02
+1634,movie_companies mc,,"mc.company_id,=,43161",2,20,10.0
+481,movie_companies mc,,"mc.company_id,=,3111",1645,166,9.909638554216867
+948,"title t,cast_info ci,movie_info_idx mi_idx","t.id=ci.movie_id,t.id=mi_idx.movie_id","ci.person_id,=,4059612",3,29,9.666666666666666
+4775,movie_keyword mk,,"mk.keyword_id,=,2172",1840,195,9.435897435897436
+2730,movie_keyword mk,,"mk.keyword_id,=,12530",894,95,9.410526315789474
+250,movie_keyword mk,,"mk.keyword_id,=,5457",1215,132,9.204545454545457
+4348,movie_companies mc,,"mc.company_id,=,253",1950,212,9.19811320754717
+549,cast_info ci,,"ci.person_id,=,2937954",7,63,9.0
+2676,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,208251",647,73,8.863013698630137
+583,movie_companies mc,,"mc.company_id,=,86397",7,62,8.857142857142858
+4776,cast_info ci,,"ci.person_id,=,3416860",283,32,8.84375
+4,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,2233497",5,44,8.8
+2254,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","mc.company_id,=,73644",471,54,8.722222222222221
+1549,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,1238100",440,51,8.627450980392156
+3259,cast_info ci,,"ci.person_id,=,765632",396,48,8.25
+3251,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","mk.keyword_id,=,5706",40644,4967,8.182806523052145
+1969,cast_info ci,,"ci.person_id,=,1206994",7,55,7.857142857142857
+4238,"title t,cast_info ci,movie_info_idx mi_idx","t.id=ci.movie_id,t.id=mi_idx.movie_id","ci.person_id,=,532659",9,69,7.666666666666667
+3755,cast_info ci,,"ci.person_id,=,645136",481,63,7.634920634920635
+1522,cast_info ci,,"ci.person_id,=,2920610",523,69,7.579710144927536
+503,movie_keyword mk,,"mk.keyword_id,=,39375",6,45,7.5
+4240,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,5053",8,60,7.5
+318,movie_companies mc,,"mc.company_id,=,1924",698,94,7.425531914893617
+4517,movie_keyword mk,,"mk.keyword_id,=,22361",10,74,7.4
+482,cast_info ci,,"ci.person_id,=,2861355",619,84,7.369047619047619
+2446,cast_info ci,,"ci.person_id,=,1870075",8,58,7.25
+2651,movie_companies mc,,"mc.company_id,=,2690",1477,205,7.204878048780488
+1793,movie_keyword mk,,"mk.keyword_id,=,2487",1893,263,7.197718631178708
+4794,movie_keyword mk,,"mk.keyword_id,=,4611",1506,211,7.137440758293839
+681,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,12169",587,84,6.988095238095238
+1167,cast_info ci,,"ci.person_id,=,2022185",9,62,6.888888888888889
+2609,movie_keyword mk,,"mk.keyword_id,=,10904",498,74,6.72972972972973
+868,movie_keyword mk,,"mk.keyword_id,=,1420",1536,236,6.508474576271187
+2343,movie_keyword mk,,"mk.keyword_id,=,7986",989,152,6.506578947368421
+4050,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,222359",396,61,6.491803278688525
+2112,movie_keyword mk,,"mk.keyword_id,=,5159",1051,167,6.293413173652695
+4869,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,72390",119,19,6.2631578947368425
+1454,movie_keyword mk,,"mk.keyword_id,=,43466",7,43,6.142857142857143
+357,movie_keyword mk,,"mk.keyword_id,=,9395",15,92,6.133333333333334
+4828,"title t,movie_companies mc,cast_info ci","t.id=mc.movie_id,t.id=ci.movie_id","ci.person_id,=,2645612",262,43,6.093023255813954
+3645,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,461",1157,191,6.057591623036649
+2666,cast_info ci,,"ci.person_id,=,1593497",8,48,6.0
+4854,movie_keyword mk,,"mk.keyword_id,=,4226",1191,200,5.955
+746,cast_info ci,,"ci.person_id,=,1602965",279,47,5.9361702127659575
+219,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","ci.person_id,=,2233951",8,47,5.875
+501,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,14472",13,76,5.846153846153846
+692,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,1935",1432,248,5.774193548387097
+4857,movie_companies mc,,"mc.company_id,=,4241",483,85,5.682352941176471
+2449,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,98786",6,34,5.666666666666667
+1663,cast_info ci,,"ci.person_id,=,2764072",453,82,5.524390243902439
+82,movie_keyword mk,,"mk.keyword_id,=,39541",8,44,5.5
+3100,cast_info ci,,"ci.person_id,=,327575",336,62,5.419354838709677
+4444,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","ci.person_id,=,84819",17,92,5.411764705882353
+733,movie_keyword mk,,"mk.keyword_id,=,11002",398,74,5.378378378378378
+1201,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,723",2300,428,5.373831775700935
+2606,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,15691",359,67,5.358208955223881
+2437,movie_keyword mk,,"mk.keyword_id,=,3529",1222,233,5.244635193133047
+3824,movie_keyword mk,,"mk.keyword_id,=,139",169,878,5.195266272189349
+2591,movie_companies mc,,"mc.company_id,=,11386",887,173,5.127167630057803
+845,movie_info mi,,"mi.info_type_id,=,72",2522,12889,5.110626486915146
+4960,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,1353770",332,65,5.107692307692307
+4511,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,34034",5,25,5.0
+1161,cast_info ci,,"ci.person_id,=,1632501",15,73,4.866666666666666
+2387,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,1434",1923,398,4.831658291457287
+1353,movie_keyword mk,,"mk.keyword_id,=,8252",806,167,4.826347305389222
+3289,movie_keyword mk,,"mk.keyword_id,=,26908",384,80,4.8
+3733,cast_info ci,,"ci.person_id,=,1254646",10,47,4.7
+1772,cast_info ci,,"ci.person_id,=,432115",356,77,4.623376623376624
+2080,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,17059",325,71,4.577464788732394
+3309,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","mk.keyword_id,=,585",219631,48165,4.559970933250286
+2433,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,1043",4908,1080,4.544444444444444
+790,movie_keyword mk,,"mk.keyword_id,=,4609",845,186,4.543010752688172
+3602,movie_keyword mk,,"mk.keyword_id,=,13622",227,50,4.54
+854,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,2194",1007,222,4.536036036036036
+3683,movie_companies mc,,"mc.company_id,=,468",577,128,4.5078125
+4833,movie_keyword mk,,"mk.keyword_id,=,84327",36,8,4.5
+3172,movie_keyword mk,,"mk.keyword_id,=,5734",36,161,4.472222222222222
+4817,movie_keyword mk,,"mk.keyword_id,=,62",2822,637,4.430141287284145
+3160,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,395",2174,494,4.40080971659919
+244,movie_keyword mk,,"mk.keyword_id,=,3593",958,218,4.394495412844036
+4439,movie_keyword mk,,"mk.keyword_id,=,3211",64,278,4.34375
+154,cast_info ci,,"ci.person_id,=,512909",356,83,4.289156626506024
+4983,movie_keyword mk,,"mk.keyword_id,=,3734",909,212,4.287735849056604
+249,movie_keyword mk,,"mk.keyword_id,=,1907",1915,455,4.208791208791209
+4647,movie_companies mc,,"mc.company_id,=,8488",332,81,4.098765432098766
+925,movie_keyword mk,,"mk.keyword_id,=,1658",835,206,4.053398058252427
+1665,movie_keyword mk,,"mk.keyword_id,=,7267",586,145,4.041379310344827
+3456,movie_companies mc,,"mc.company_id,=,26567",6,24,4.0
+3659,movie_keyword mk,,"mk.keyword_id,=,108794",1,4,4.0
+4281,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,1874210",208,52,4.0
+1228,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,105668",1,4,4.0
+4865,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,31818",8,32,4.0
+135,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,3800",920,232,3.9655172413793114
+2246,movie_keyword mk,,"mk.keyword_id,=,16036",23,91,3.9565217391304346
+1497,"title t,cast_info ci,movie_info mi","t.id=ci.movie_id,t.id=mi.movie_id","ci.person_id,=,2738025",51,200,3.92156862745098
+168,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,15901",264,69,3.8260869565217392
+3569,movie_keyword mk,,"mk.keyword_id,=,3046",1016,267,3.805243445692884
+247,cast_info ci,,"ci.person_id,=,3639607",125,33,3.787878787878788
+2238,movie_keyword mk,,"mk.keyword_id,=,36635",130,35,3.7142857142857135
+4787,movie_keyword mk,,"mk.keyword_id,=,2724",965,260,3.7115384615384617
+2654,movie_keyword mk,,"mk.keyword_id,=,6826",814,220,3.7
+850,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,3658",3922,1060,3.7
+2647,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,2164",2080,566,3.674911660777385
+4460,movie_keyword mk,,"mk.keyword_id,=,51032",6,22,3.6666666666666665
+1758,cast_info ci,,"ci.person_id,=,2794798",318,87,3.655172413793104
+1876,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,4228",800,225,3.555555555555556
+553,cast_info ci,,"ci.person_id,=,1371938",276,79,3.4936708860759493
+356,movie_keyword mk,,"mk.keyword_id,=,217",1088,313,3.476038338658147
+4258,movie_keyword mk,,"mk.keyword_id,=,3085",951,274,3.470802919708029
+323,movie_keyword mk,,"mk.keyword_id,=,8666",681,199,3.422110552763819
+3634,"title t,cast_info ci,movie_info mi","t.id=ci.movie_id,t.id=mi.movie_id","ci.person_id,=,2743384",48,164,3.4166666666666665
+983,movie_keyword mk,,"mk.keyword_id,=,7793",86,293,3.4069767441860463
+3252,movie_keyword mk,,"mk.keyword_id,=,14631",321,95,3.3789473684210525
+1859,movie_keyword mk,,"mk.keyword_id,=,86",1296,387,3.3488372093023258
+4897,movie_keyword mk,,"mk.keyword_id,=,32073",21,70,3.333333333333333
+701,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,3616623",7,23,3.2857142857142856
+2828,movie_keyword mk,,"mk.keyword_id,=,9513",271,83,3.265060240963856
+3469,cast_info ci,,"ci.person_id,=,2464205",137,42,3.261904761904762
+265,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,75945",68,21,3.238095238095238
+2316,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,44018",1202,373,3.222520107238606
+2907,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,12500",190,59,3.2203389830508478
+4414,movie_keyword mk,,"mk.keyword_id,=,4704",684,213,3.211267605633803
+4067,movie_keyword mk,,"mk.keyword_id,=,9645",27,85,3.1481481481481484
+4073,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,20431",21,66,3.142857142857143
+2029,movie_keyword mk,,"mk.keyword_id,=,7311",44,137,3.113636363636364
+3997,movie_keyword mk,,"mk.keyword_id,=,3293",940,302,3.1125827814569536
+4868,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,28519",9,28,3.111111111111111
+2313,movie_keyword mk,,"mk.keyword_id,=,35728",87,28,3.107142857142857
+3726,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,910",17043,5495,3.1015468607825296
+2887,movie_keyword mk,,"mk.keyword_id,=,1023",1228,396,3.101010101010101
+1182,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","mk.keyword_id,=,28",2950,9083,3.078983050847458
+3127,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,6420",429,140,3.0642857142857145
+2205,movie_companies mc,,"mc.company_id,=,27930",76,25,3.04
+4319,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,2724",965,319,3.025078369905956
+4741,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,132365",1,3,3.0
+1674,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,209735",1,3,3.0
+1069,cast_info ci,,"ci.person_id,=,3189962",192,64,3.0
+4251,movie_keyword mk,,"mk.keyword_id,=,5996",357,120,2.975
+1425,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","mk.keyword_id,=,36076",3574,1215,2.9415637860082304
+1849,movie_keyword mk,,"mk.keyword_id,=,18605",26,76,2.923076923076923
+3710,movie_keyword mk,,"mk.keyword_id,=,5304",63,184,2.9206349206349205
+103,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,17072",207,71,2.915492957746479
+703,movie_keyword mk,,"mk.keyword_id,=,4965",95,276,2.905263157894737
+185,movie_companies mc,,"mc.company_id,=,74747",199,69,2.8840579710144927
+3721,cast_info ci,,"ci.person_id,=,2940746",22,63,2.863636363636364
+3057,movie_companies mc,,"mc.company_id,=,88504",190,67,2.8358208955223883
+4264,movie_companies mc,,"mc.company_id,=,90358",18,51,2.833333333333333
+1648,movie_keyword mk,,"mk.keyword_id,=,1857",99,280,2.8282828282828283
+1307,movie_companies mc,,"mc.company_id,=,1671",477,171,2.789473684210526
+1009,movie_keyword mk,,"mk.keyword_id,=,17540",47,125,2.6595744680851063
+2083,movie_keyword mk,,"mk.keyword_id,=,4594",80,212,2.65
+1115,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","mk.keyword_id,=,2811",4658,1772,2.628668171557562
+4820,cast_info ci,,"ci.person_id,=,2988270",162,62,2.6129032258064515
+1384,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,7637",4400,1685,2.6112759643916914
+332,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,3960413",96,37,2.5945945945945947
+3322,movie_keyword mk,,"mk.keyword_id,=,60248",72,28,2.571428571428572
+370,movie_keyword mk,,"mk.keyword_id,=,20284",23,59,2.565217391304348
+727,movie_keyword mk,,"mk.keyword_id,=,60890",11,28,2.5454545454545454
+4171,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","mk.keyword_id,=,29514",1762,700,2.5171428571428573
+4515,movie_companies mc,,"mc.company_id,=,13114",2434,970,2.509278350515464
+537,movie_keyword mk,,"mk.keyword_id,=,4938",110,276,2.5090909090909093
+1390,cast_info ci,,"ci.person_id,=,506202",194,78,2.4871794871794872
+3596,movie_keyword mk,,"mk.keyword_id,=,17089",211,85,2.4823529411764707
+3355,"title t,cast_info ci,movie_info mi","t.id=ci.movie_id,t.id=mi.movie_id","ci.person_id,=,1522004",527,213,2.4741784037558685
+4426,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,2653765",19,47,2.473684210526316
+1966,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","mk.keyword_id,=,2056",28542,11559,2.469244744355048
+4552,movie_keyword mk,,"mk.keyword_id,=,494",1060,434,2.442396313364055
+3261,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,107031",24,10,2.4
+4139,movie_info mi,,"mi.info_type_id,=,66",6536,15682,2.3993268053855568
+2303,movie_keyword mk,,"mk.keyword_id,=,707",770,1843,2.3935064935064934
+1587,movie_companies mc,,"mc.company_id,=,106120",43,18,2.388888888888889
+1645,movie_keyword mk,,"mk.keyword_id,=,967",173,413,2.38728323699422
+515,movie_keyword mk,,"mk.keyword_id,=,19877",124,52,2.3846153846153846
+3588,movie_companies mc,,"mc.company_id,=,95315",170,72,2.361111111111111
+1400,movie_keyword mk,,"mk.keyword_id,=,16938",190,81,2.345679012345679
+4516,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,65419",994,425,2.3388235294117647
+4536,movie_keyword mk,,"mk.keyword_id,=,34060",27,62,2.2962962962962963
+2890,movie_keyword mk,,"mk.keyword_id,=,9109",225,98,2.295918367346939
+4499,movie_keyword mk,,"mk.keyword_id,=,21169",171,75,2.28
+4150,movie_companies mc,,"mc.company_id,=,94312",47,107,2.276595744680851
+3788,movie_keyword mk,,"mk.keyword_id,=,22747",33,75,2.272727272727273
+1907,movie_keyword mk,,"mk.keyword_id,=,27539",184,81,2.271604938271605
+726,movie_companies mc,,"mc.company_id,=,241",356,157,2.267515923566879
+4564,cast_info ci,,"ci.person_id,=,3408615",70,31,2.2580645161290325
+784,movie_keyword mk,,"mk.keyword_id,=,1731",986,441,2.235827664399093
+4815,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,68756",29,13,2.230769230769231
+1765,movie_keyword mk,,"mk.keyword_id,=,3325",559,251,2.2270916334661357
+382,movie_keyword mk,,"mk.keyword_id,=,15690",227,102,2.2254901960784315
+1979,movie_keyword mk,,"mk.keyword_id,=,3857",595,269,2.2118959107806693
+2577,cast_info ci,,"ci.person_id,=,3959728",20,44,2.2
+2231,movie_keyword mk,,"mk.keyword_id,=,16394",52,114,2.1923076923076925
+2146,movie_keyword mk,,"mk.keyword_id,=,14803",335,153,2.189542483660131
+162,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","mk.keyword_id,=,2616",6965,3227,2.158351409978308
+2309,movie_keyword mk,,"mk.keyword_id,=,16378",55,118,2.145454545454545
+4561,cast_info ci,,"ci.person_id,=,2724940",29,62,2.1379310344827585
+569,movie_companies mc,,"mc.company_id,=,7563",1543,3291,2.132858068697342
+3787,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,64316",8,17,2.125
+3419,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","mk.keyword_id,=,4110",20963,9953,2.1061991359389127
+4256,movie_keyword mk,,"mk.keyword_id,=,11190",174,83,2.0963855421686746
+2528,"title t,movie_companies mc,cast_info ci","t.id=mc.movie_id,t.id=ci.movie_id","ci.person_id,=,759353",251,121,2.074380165289256
+4735,movie_companies mc,,"mc.company_id,=,4387",168,81,2.074074074074074
+1546,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","t.production_year,=,1912",28741,59437,2.068021293622351
+2460,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,2829728",31,64,2.064516129032258
+1197,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,265",1468,2948,2.008174386920981
+4368,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","mk.keyword_id,=,14702",5218,2607,2.0015343306482545
+3378,movie_keyword mk,,"mk.keyword_id,=,56904",50,25,2.0
+2657,movie_keyword mk,,"mk.keyword_id,=,114847",2,4,2.0
+1533,movie_keyword mk,,"mk.keyword_id,=,5718",320,161,1.9875776397515528
+3174,movie_companies mc,,"mc.company_id,=,13691",48,95,1.9791666666666667
+2876,movie_keyword mk,,"mk.keyword_id,=,837",1442,2831,1.963245492371706
+4481,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,37",1754,895,1.9597765363128488
+150,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,7580",411,210,1.957142857142857
+570,cast_info ci,,"ci.person_id,=,3947902",87,45,1.9333333333333331
+329,movie_keyword mk,,"mk.keyword_id,=,1556",2620,1359,1.927888153053716
+2488,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,3811",3555,1862,1.9092373791621915
+1078,movie_keyword mk,,"mk.keyword_id,=,67032",10,19,1.9
+188,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","t.production_year,=,1985",2696775,1423467,1.8945117800412652
+3567,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,36114",125,66,1.893939393939394
+1863,movie_keyword mk,,"mk.keyword_id,=,1878",1938,1028,1.885214007782101
+4750,movie_keyword mk,,"mk.keyword_id,=,2488",34710,18456,1.8806892067620289
+2175,cast_info ci,,"ci.person_id,=,2362717",109,58,1.8793103448275863
+630,movie_keyword mk,,"mk.keyword_id,=,4497",393,211,1.8625592417061607
+1455,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,5346",34,63,1.8529411764705883
+813,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,1515",13200,7213,1.8300291140995424
+1225,movie_companies mc,,"mc.company_id,=,101767",73,40,1.825
+1936,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,73",9948,5467,1.8196451435888052
+3906,movie_keyword mk,,"mk.keyword_id,=,7376",117,210,1.794871794871795
+666,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","mk.keyword_id,=,78654",306,171,1.7894736842105263
+754,movie_keyword mk,,"mk.keyword_id,=,1056",724,405,1.7876543209876543
+1555,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","mk.keyword_id,=,3239",5214,9233,1.7708093594169545
+205,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,797",7704,4362,1.766162310866575
+4831,movie_keyword mk,,"mk.keyword_id,=,10677",58,102,1.7586206896551724
+3741,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,7794",1556,885,1.7581920903954802
+1548,movie_keyword mk,,"mk.keyword_id,=,2549",2411,1374,1.754730713245997
+4354,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,9557",146,84,1.738095238095238
+2642,movie_keyword mk,,"mk.keyword_id,=,20119",135,78,1.7307692307692308
+1706,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,160",36136,20887,1.7300713362378513
+4802,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,6092",444,257,1.727626459143969
+2784,cast_info ci,,"ci.person_id,=,1554501",119,69,1.7246376811594204
+1049,movie_keyword mk,,"mk.keyword_id,=,46484",14,24,1.7142857142857142
+3329,movie_keyword mk,,"mk.keyword_id,=,834",1113,650,1.7123076923076923
+1542,movie_keyword mk,,"mk.keyword_id,=,264",255,433,1.6980392156862745
+1975,movie_keyword mk,,"mk.keyword_id,=,41683",88,52,1.6923076923076923
+4394,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","mk.keyword_id,=,9322",2308,1378,1.6748911465892595
+136,movie_keyword mk,,"mk.keyword_id,=,45357",21,35,1.6666666666666667
+2758,"title t,movie_info mi",t.id=mi.movie_id,"mi.info_type_id,=,105",121863,73141,1.6661380074103445
+4721,movie_keyword mk,,"mk.keyword_id,=,22664",44,73,1.6590909090909092
+3154,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,4419",227,137,1.6569343065693432
+4825,cast_info ci,,"ci.person_id,=,2984786",45,74,1.6444444444444444
+4992,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,2867",4261,2624,1.623856707317073
+2379,movie_keyword mk,,"mk.keyword_id,=,486",2215,1369,1.6179693206720234
+898,movie_keyword mk,,"mk.keyword_id,=,34314",99,62,1.596774193548387
+1767,movie_keyword mk,,"mk.keyword_id,=,59274",73,46,1.5869565217391304
+1132,movie_companies mc,,"mc.company_id,=,343",325,206,1.577669902912621
+4685,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","t.production_year,=,1986",2471014,1569393,1.574503008487995
+2115,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","mk.keyword_id,=,16264",75949,119284,1.570580257804579
+4943,movie_keyword mk,,"mk.keyword_id,=,16905",149,95,1.568421052631579
+612,movie_companies mc,,"mc.company_id,=,7633",78,50,1.56
+1607,movie_keyword mk,,"mk.keyword_id,=,11402",36,56,1.5555555555555556
+352,movie_keyword mk,,"mk.keyword_id,=,35602",18,28,1.5555555555555556
+4176,movie_companies mc,,"mc.company_id,=,28172",18,28,1.5555555555555556
+2650,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","ci.person_id,=,2712597",101,65,1.553846153846154
+149,movie_keyword mk,,"mk.keyword_id,=,3939",335,216,1.5509259259259258
+3189,movie_keyword mk,,"mk.keyword_id,=,8552",113,174,1.5398230088495577
+384,movie_keyword mk,,"mk.keyword_id,=,1695",159,244,1.5345911949685536
+1970,movie_keyword mk,,"mk.keyword_id,=,3904",368,241,1.5269709543568464
+1795,movie_keyword mk,,"mk.keyword_id,=,3394",371,243,1.5267489711934157
+3633,movie_keyword mk,,"mk.keyword_id,=,1305",144,219,1.5208333333333333
+3598,"title t,movie_companies mc,cast_info ci","t.id=mc.movie_id,t.id=ci.movie_id","mc.company_id,=,23141",1199,790,1.517721518987342
+227,cast_info ci,,"ci.person_id,=,2459901",36,54,1.5
+750,movie_keyword mk,,"mk.keyword_id,=,3585",147,218,1.4829931972789117
+157,cast_info ci,,"ci.person_id,=,2793788",128,87,1.471264367816092
+4780,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","mk.keyword_id,=,8140",3474,5099,1.4677605066206103
+3298,movie_companies mc,,"mc.company_id,=,11244",3796,2591,1.4650714010034736
+4159,movie_keyword mk,,"mk.keyword_id,=,3714",445,304,1.4638157894736843
+1117,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,2555092",60,41,1.4634146341463414
+493,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","t.production_year,=,2007",1549144,1059018,1.462811774681828
+4127,"title t,cast_info ci,movie_info mi","t.id=ci.movie_id,t.id=mi.movie_id","ci.person_id,=,3191291",219,150,1.46
+1741,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,3158911",24,35,1.4583333333333333
+4194,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,2481991",61,42,1.4523809523809523
+4200,cast_info ci,,"ci.person_id,=,1140659",65,45,1.4444444444444444
+2109,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,1725807",75,52,1.4423076923076923
+3107,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","ci.person_id,=,211025",146,103,1.4174757281553398
+4796,movie_keyword mk,,"mk.keyword_id,=,48264",17,24,1.411764705882353
+1799,movie_keyword mk,,"mk.keyword_id,=,3177",270,380,1.4074074074074074
+3765,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,7296",795,568,1.3996478873239435
+4066,"title t,cast_info ci,movie_info_idx mi_idx","t.id=ci.movie_id,t.id=mi_idx.movie_id","t.production_year,=,1938",104928,146576,1.3969197926197012
+4441,title t,,"t.production_year,=,2011",160017,115193,1.389120866719332
+2101,"title t,movie_info mi",t.id=mi.movie_id,"mi.info_type_id,=,102",16603,22895,1.37896765644763
+1754,"title t,cast_info ci",t.id=ci.movie_id,"ci.person_id,=,2632463",51,37,1.3783783783783785
+452,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,11663",826,1133,1.3716707021791767
+3091,movie_keyword mk,,"mk.keyword_id,=,27643",27,37,1.3703703703703705
+1673,movie_keyword mk,,"mk.keyword_id,=,27384",60,82,1.3666666666666667
+1058,movie_keyword mk,,"mk.keyword_id,=,15172",69,94,1.3623188405797102
+339,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,62703",14,19,1.3571428571428572
+79,"title t,movie_info mi",t.id=mi.movie_id,"t.production_year,=,1906",11167,15128,1.354705829676726
+3071,cast_info ci,,"ci.person_id,=,1868911",43,58,1.3488372093023255
+1534,"title t,movie_info_idx mi_idx",t.id=mi_idx.movie_id,"t.production_year,=,1914",741,994,1.3414304993252362
+2202,title t,,"t.production_year,=,2007",119565,89432,1.3369375614992396
+301,"title t,movie_companies mc,movie_info mi","t.id=mc.movie_id,t.id=mi.movie_id","mc.company_id,=,160",572560,428264,1.3369323594791998
+4906,movie_keyword mk,,"mk.keyword_id,=,4698",159,211,1.3270440251572326
+4468,movie_keyword mk,,"mk.keyword_id,=,807",5916,4460,1.326457399103139
+3072,movie_keyword mk,,"mk.keyword_id,=,2648",249,330,1.3253012048192772
+2805,movie_keyword mk,,"mk.keyword_id,=,8940",75,99,1.32
+3148,movie_keyword mk,,"mk.keyword_id,=,4633",160,211,1.31875
+1829,"title t,movie_info mi",t.id=mi.movie_id,"mi.info_type_id,=,2",1288928,979656,1.3156944886776585
+4625,cast_info ci,,"ci.person_id,=,233430",113,86,1.313953488372093
+1618,"title t,movie_companies mc,movie_info mi","t.id=mc.movie_id,t.id=mi.movie_id","mi.info_type_id,=,6",1527783,1170696,1.3050211156440272
+3795,movie_keyword mk,,"mk.keyword_id,=,746",574,441,1.3015873015873016
+622,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,1435",199,257,1.2914572864321607
+2479,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","mk.keyword_id,=,1415",85658,66556,1.2870064306749205
+3384,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,19843",63,81,1.2857142857142858
+37,movie_keyword mk,,"mk.keyword_id,=,11492",44,56,1.2727272727272727
+2931,"title t,cast_info ci,movie_info mi","t.id=ci.movie_id,t.id=mi.movie_id","t.production_year,=,1955",1546586,1216014,1.2718488438455475
+3991,"title t,movie_info mi",t.id=mi.movie_id,"t.production_year,=,1931",30703,24141,1.2718197257777226
+4471,"title t,cast_info ci",t.id=ci.movie_id,"t.production_year,=,1995",511630,403801,1.2670349999133237
+2336,"title t,movie_companies mc,movie_info mi","t.id=mc.movie_id,t.id=mi.movie_id","t.production_year,=,1935",165424,131048,1.26231609791832
+2566,movie_keyword mk,,"mk.keyword_id,=,25945",99,79,1.2531645569620251
+4324,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,56",9942,7963,1.2485244254677883
+1929,movie_keyword mk,,"mk.keyword_id,=,2815",254,316,1.2440944881889764
+4855,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,7679",342,275,1.2436363636363637
+687,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","mk.keyword_id,=,365",73874,59508,1.2414129192713586
+1845,cast_info ci,,"ci.person_id,=,319358",50,62,1.24
+3530,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,1732",6011,4850,1.2393814432989692
+3937,movie_info mi,,"mi.info_type_id,=,3",1533909,1240349,1.2366753228325251
+91,movie_companies mc,,"mc.company_id,=,185",677,828,1.223042836041359
+1728,movie_keyword mk,,"mk.keyword_id,=,31694",63,77,1.2222222222222223
+2619,"title t,movie_companies mc,movie_info_idx mi_idx","t.id=mc.movie_id,t.id=mi_idx.movie_id","t.production_year,=,2013",36594,29965,1.2212247622225931
+1563,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","mk.keyword_id,=,225",1299,1064,1.2208646616541354
+2981,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","t.kind_id,=,6",160287,131474,1.2191535969088945
+1961,cast_info ci,,"ci.person_id,=,3920247",56,46,1.2173913043478262
+220,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","mk.keyword_id,=,74431",504,419,1.2028639618138426
+234,movie_keyword mk,,"mk.keyword_id,=,3311",5252,4384,1.197992700729927
+2923,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","mk.keyword_id,=,6226",15768,13196,1.19490754774174
+2665,movie_keyword mk,,"mk.keyword_id,=,2109",2113,1772,1.1924379232505644
+3533,"title t,movie_info_idx mi_idx",t.id=mi_idx.movie_id,"t.production_year,=,1965",9316,7813,1.1923716882119544
+2739,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","mi.info_type_id,=,4",5192341,6156402,1.1856698163699186
+2096,cast_info ci,,"ci.person_id,=,2551224",71,60,1.1833333333333331
+786,"title t,movie_info mi,movie_info_idx mi_idx","t.id=mi.movie_id,t.id=mi_idx.movie_id","t.kind_id,=,3",1225230,1038864,1.1793940304024395
+2644,movie_keyword mk,,"mk.keyword_id,=,21883",62,73,1.1774193548387095
+3695,"title t,cast_info ci",t.id=ci.movie_id,"t.production_year,=,2012",2469963,2107395,1.1720455823421807
+3484,"title t,movie_info_idx mi_idx",t.id=mi_idx.movie_id,"t.production_year,=,1982",11718,10010,1.170629370629371
+4628,cast_info ci,,"ci.person_id,=,705520",69,59,1.1694915254237288
+2932,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","t.production_year,=,1998",677011,579021,1.1692339310664035
+3949,"title t,movie_info mi,movie_info_idx mi_idx","t.id=mi.movie_id,t.id=mi_idx.movie_id","mi.info_type_id,=,105",136507,159172,1.1660354414059353
+2058,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,2690",246,285,1.1585365853658536
+314,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","t.production_year,=,1964",1025258,885947,1.1572452979692915
+4284,movie_keyword mk,,"mk.keyword_id,=,65543",23,20,1.15
+3874,movie_info mi,,"mi.info_type_id,=,86",6422,5614,1.1439258995368722
+805,"title t,movie_info mi",t.id=mi.movie_id,"t.production_year,=,1987",131097,149915,1.143542567717034
+2979,"title t,cast_info ci,movie_info mi","t.id=ci.movie_id,t.id=mi.movie_id","t.production_year,=,1934",872966,765863,1.1398461604751764
+412,movie_info mi,,"mi.info_type_id,=,57",6034,6804,1.1276102088167053
+2843,"title t,movie_companies mc,movie_keyword mk","t.id=mc.movie_id,t.id=mk.movie_id","mk.keyword_id,=,125673",8,9,1.125
+4437,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,142",912,812,1.123152709359606
+2947,"title t,movie_companies mc,movie_info_idx mi_idx","t.id=mc.movie_id,t.id=mi_idx.movie_id","t.production_year,=,1981",30990,34703,1.1198128428525331
+4213,"title t,movie_companies mc,cast_info ci","t.id=mc.movie_id,t.id=ci.movie_id","mc.company_id,=,22644",666,745,1.1186186186186189
+2050,movie_keyword mk,,"mk.keyword_id,=,2524",363,406,1.118457300275482
+4216,"title t,movie_companies mc,movie_info mi","t.id=mc.movie_id,t.id=mi.movie_id","t.production_year,=,1969",362862,405074,1.116330726281617
+3353,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","mk.keyword_id,=,11835",236,213,1.107981220657277
+1637,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","t.production_year,=,1969",822274,911038,1.107949418320414
+1532,"title t,cast_info ci",t.id=ci.movie_id,"ci.role_id,=,1",12670688,11439496,1.1076264199052126
+3337,"title t,movie_info mi,movie_keyword mk","t.id=mi.movie_id,t.id=mk.movie_id","mk.keyword_id,=,6790",11935,10777,1.1074510531687851
+4210,"title t,movie_info mi",t.id=mi.movie_id,"t.production_year,=,1927",33131,29941,1.1065428676396911
+2289,"title t,movie_info mi,movie_info_idx mi_idx","t.id=mi.movie_id,t.id=mi_idx.movie_id","mi.info_type_id,=,18",1128630,1243132,1.1014522031135092
+1606,"title t,movie_keyword mk",t.id=mk.movie_id,"t.production_year,=,1973",35734,32505,1.0993385632979542
+2951,movie_keyword mk,,"mk.keyword_id,=,1463",196,215,1.096938775510204
+3340,"title t,movie_info_idx mi_idx",t.id=mi_idx.movie_id,"t.production_year,=,1989",17033,15538,1.0962157291800747
+3188,cast_info ci,,"ci.person_id,=,2267485",42,46,1.0952380952380951
+831,movie_companies mc,,"mc.company_id,=,15192",403,368,1.0951086956521738
+2119,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,3139",2437,2227,1.0942972608890884
+2474,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,3994",407,373,1.0911528150134049
+518,movie_keyword mk,,"mk.keyword_id,=,48374",22,24,1.0909090909090908
+1280,movie_keyword mk,,"mk.keyword_id,=,25055",71,77,1.0845070422535212
+2394,"title t,cast_info ci,movie_info_idx mi_idx","t.id=ci.movie_id,t.id=mi_idx.movie_id","t.production_year,=,1977",274429,296435,1.0801883182899767
+257,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,1741",3924,3635,1.0795048143053645
+1868,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,1733",1523,1411,1.0793763288447908
+4497,movie_companies mc,,"mc.company_id,=,21142",55,51,1.0784313725490196
+4389,"title t,movie_companies mc,movie_info_idx mi_idx","t.id=mc.movie_id,t.id=mi_idx.movie_id","t.production_year,=,2007",176270,164095,1.0741948261677687
+128,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,5831",1632,1725,1.056985294117647
+4146,"title t,movie_companies mc",t.id=mc.movie_id,"mc.company_id,=,424",8235,7795,1.0564464400256577
+4108,movie_keyword mk,,"mk.keyword_id,=,7400",197,208,1.0558375634517767
+4266,"title t,movie_keyword mk",t.id=mk.movie_id,"t.production_year,=,1990",53554,56376,1.0526944766030548
+3242,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,2837",2830,2691,1.0516536603493123
+1234,"title t,movie_companies mc",t.id=mc.movie_id,"t.production_year,=,1947",5607,5883,1.0492241840556449
+4014,"title t,movie_keyword mk",t.id=mk.movie_id,"t.production_year,=,1996",76522,80136,1.047228248085518
+1589,"title t,cast_info ci,movie_keyword mk","t.id=ci.movie_id,t.id=mk.movie_id","t.kind_id,=,1",168881428,161297920,1.0470155349802404
+878,"title t,movie_info_idx mi_idx",t.id=mi_idx.movie_id,"t.production_year,=,2003",45309,47436,1.0469443156988678
+1023,movie_keyword mk,,"mk.keyword_id,=,32482",67,70,1.044776119402985
+1641,movie_companies mc,,"mc.company_type_id,=,2",1334883,1389879,1.0411991163270489
+788,cast_info ci,,"ci.person_id,=,2813897",52,50,1.04
+2441,"title t,movie_companies mc,movie_info mi","t.id=mc.movie_id,t.id=mi.movie_id","t.production_year,=,1968",407199,421114,1.034172480777212
+2366,title t,,"t.production_year,=,1961",11073,10718,1.0331218510916216
+4673,"title t,cast_info ci,movie_info_idx mi_idx","t.id=ci.movie_id,t.id=mi_idx.movie_id","ci.role_id,=,3",4575848,4711251,1.0295907993447335
+235,movie_keyword mk,,"mk.keyword_id,=,438",3195,3106,1.0286542176432711
+4954,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,5602",178,183,1.0280898876404494
+447,cast_info ci,,"ci.person_id,=,1369261",77,79,1.025974025974026
+3688,movie_info mi,,"mi.info_type_id,=,65",6620,6772,1.0229607250755286
+3818,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,1128",628,616,1.0194805194805194
+3763,movie_keyword mk,,"mk.keyword_id,=,5882",1790,1757,1.0187820147979512
+3685,cast_info ci,,"ci.person_id,=,928639",62,61,1.0163934426229508
+2558,movie_keyword mk,,"mk.keyword_id,=,16213",200,197,1.015228426395939
+1561,movie_keyword mk,,"mk.keyword_id,=,580",3040,2996,1.014686248331108
+2218,"title t,movie_info_idx mi_idx",t.id=mi_idx.movie_id,"t.production_year,=,1997",26998,27358,1.0133343210608192
+4629,"title t,movie_keyword mk",t.id=mk.movie_id,"mk.keyword_id,=,23961",78,77,1.0129870129870129
+3709,"title t,movie_keyword mk",t.id=mk.movie_id,"t.production_year,=,1997",82084,81042,1.012857530663113
+2690,cast_info ci,,"ci.person_id,=,227023",86,85,1.011764705882353
+3905,"title t,movie_info mi,movie_info_idx mi_idx","t.id=mi.movie_id,t.id=mi_idx.movie_id","t.production_year,=,2002",643672,636492,1.0112805816883794
+1535,title t,,"t.production_year,=,1997",38955,39279,1.0083172891798229
+3507,"title t,movie_info_idx mi_idx,movie_keyword mk","t.id=mi_idx.movie_id,t.id=mk.movie_id","t.kind_id,=,1",7549165,7602628,1.007081975291307
+4157,cast_info ci,,"ci.person_id,=,1763634",53,53,1.0
+1895,"title t,cast_info ci,movie_info mi","t.id=ci.movie_id,t.id=mi.movie_id","ci.person_id,=,526527",301,301,1.0
